@@ -37,7 +37,13 @@ function findElement(arr, value) {
  *    2 => [ 1, 3 ] 
  *    5 => [ 1, 3, 5, 7, 9 ]
  */
-function generateOdds(len, last = 1, array = []) {
+function generateOdds(len, last, array) {
+  if (!last && last != 0) {
+    last = 1
+  }
+  if (!array) {
+    array = []
+  }
   if (len) {
     if (last % 2) {
       array.push(last);
