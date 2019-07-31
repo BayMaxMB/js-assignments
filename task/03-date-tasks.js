@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+   return (new Date(value)).valueOf();
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   return (new Date(value)).valueOf();
 }
 
 
@@ -56,7 +56,17 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+   const year = date.getFullYear();
+   if (year % 4) {
+    return false;
+   }
+   if (year % 100) {
+    return true;
+   }
+   if (year % 400) {
+    return false;
+   }
+   return true;
 }
 
 
@@ -76,9 +86,26 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+  let millis = (new Date(endDate.valueOf() - startDate.valueOf())).valueOf();
+  let h = Math.floor(millis / 3600000);
+  millis %= 3600000;
+  let m = Math.floor(millis / 60000);
+  millis %= 60000;
+  let s = Math.floor(millis / 1000);
+  millis %= 1000;
+  const digitize = (numb, zeros) => {
+    let nStr = numb.toString();
+    for (let i = 1; i <= zeros - numb.toString().length; i++) {
+      nStr = '0' + nStr;
+    }
+    return nStr;
+  }
+  h = digitize(h, 2);
+  m = digitize(m, 2);
+  s = digitize(s, 2);
+  millis = digitize(millis, 3);
+  return `${h}:${m}:${s}.${millis}`;
 }
-
 
 /**
  * Returns the angle (in radians) between the hands of an analog clock for the specified Greenwich time.
@@ -94,9 +121,13 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+    let h = date.getUTCHours();
+    h = (h > 12) ? h - 12 : h;
+    const m = date.getUTCMinutes();
+    let angle = Math.abs((0.5 * (60 * h  + m) - 6 * m));
+    angle = (angle > 180) ? 360 - angle : angle;
+    return angle * Math.PI / 180;
 }
-
 
 module.exports = {
     parseDataFromRfc2822: parseDataFromRfc2822,
